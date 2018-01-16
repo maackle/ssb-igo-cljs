@@ -1,0 +1,9 @@
+{
+  "name": "ssb-igo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "tenuki": "^0.2.2"
+  }
+}

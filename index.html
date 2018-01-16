@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ssb-igo</title>
+  <link rel="stylesheet" type="text/css" href="vendor/tenuki/tenuki.css" />
+  <script type="text/javascript" src="vendor/tenuki/tenuki.js"></script>
+  <script type="text/javascript" src="vendor/tenuki/example-controls.js"></script>
+</head>
+<body>
+
+  <div class="tenuki-board" data-include-coordinates="true"></div>
+
+  <div class="controls">
+    <div class="buttons">
+      <a class="pass" href="#">Pass</a>
+      <a class="undo" href="#">Undo</a>
+    </div>
+
+    <div class="game-info"><p>&nbsp;</p></div>
+    <div class="text-info"><p></p></div>
+  </div>
+
+  <script type="text/javascript">
+    var boardElement = document.querySelector(".tenuki-board");
+    var game = new tenuki.Game({
+      element: boardElement,
+      boardSize: 19,
+    });
+
+    var controlElement = document.querySelector(".controls");
+    var controls = new ExampleGameControls(controlElement, game);
+    controls.setup();
+
+    game.callbacks.postRender = function(game) {
+      controls.updateStats();
+    };
+  </script>
+</body>
+</html>
