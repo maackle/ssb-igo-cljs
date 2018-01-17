@@ -1,1 +1,1 @@
-node target/js/ssb_igo.js
+lumo -c src dev/build.cljs && node dev/index.js

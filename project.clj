@@ -22,7 +22,7 @@
               :compiler {
                 :main ssb-igo.core
                 :asset-path "target/js/dev"
-                :output-to "target/js/ssb_igo.js"
+                :output-to "target/inject.js"
                 :output-dir "target/js/dev"
                 :target :nodejs
                 :optimizations :none
