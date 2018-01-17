@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  alice:
+    build: .
+    ports:
+      - "8001:8008"
+    volumes:
+      - "./target:/root/target"
+      - "./node_modules:/root/node_modules"
+      - "data-alice:/root/.ssb"
+  bob:
+    build: .
+    ports:
+      - "8002:8008"
+    volumes:
+      - "./target:/root/target"
+      - "./node_modules:/root/node_modules"
+      - "data-bob:/root/.ssb"
+
+volumes:
+  data-alice:
+  data-bob:

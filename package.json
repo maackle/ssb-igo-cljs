@@ -1,9 +1,17 @@
 {
-  "name": "ssb-igo",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
+  "name": "ssb-igo-node",
+  "version": "0.1.0",
+  "private": "true",
+  "engines": {
+    "node": "6.x"
+  },
+  "main": "server.js",
   "dependencies": {
-    "tenuki": "^0.2.2"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.4.15",
+    "ws": "^0.8.1",
+    "left-pad": "1.2.0",
+    "scuttlebot": "10.4.10"
   }
 }
