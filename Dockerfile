@@ -1,5 +1,6 @@
 # specify the node base image with your desired version node:<version>
-FROM node:7
+# NB: Must match lumo node version!!
+FROM node:8.5
 RUN apt update
 RUN apt install -y vim
 RUN npm config set user 0

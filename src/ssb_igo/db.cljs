@@ -1,9 +1,10 @@
 (ns ssb-igo.db
   (:require
+   [ssb-igo.util :refer (trace)]
     ))
 
 (def index-version 0)
-(def index-name "ssb-igo-index")
+(def index-name "ssbIgoIndex")
 (def flumeview-reduce (js/require "flumeview-reduce"))
 
 (defn get-content
@@ -29,9 +30,15 @@
 
       false)))
 
+;; CRUCIAL!
+;; Allows uniform index access even if the reducer did not run
+(def codec
+  {:encode identity
+   :decode js->clj})
+
 (defn reducer
   [index msg]
-  (println msg)
+  (trace "incoming message" msg)
   (update index :count inc))
 
 (defn mapper
@@ -41,13 +48,18 @@
 (defn flume-view
   [sbot]
   ; TODO: just do .use
+  (println "PLEAEW")
   (._flumeUse sbot
-        index-name
-        (flumeview-reduce index-version reducer identity {:count 0})))
+              index-name
+              (flumeview-reduce index-version reducer identity (clj->js codec) {:count 0})))
 
 
 (defn get-total
   [view]
-  (.get view (fn [err index]
-               (println "err? " err)
-               (println "index" index))))
+  (.get view
+        (fn [err index]
+          (do
+            (println "\nindex??" (-> index))
+            (println "\nerr?? " err)
+            )
+          )))

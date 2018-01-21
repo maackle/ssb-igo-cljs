@@ -6,28 +6,19 @@
 
 (enable-console-print!)
 
-
-
 (defn ^:export init
   ([sbot] (init sbot nil))
   ([sbot config]
-   (let [view (db/flume-view sbot)]
-     (println "hey a view" view)
-     {:getTotal #(db/get-total view)}))
+   (let [view (db/flume-view sbot)
+         get-total #(db/get-total view)]
+     {:getTotal get-total}))
   )
 
-(defn ^:export run-demo
-  []
-  (let [sbot-create (-> (js/require "scuttlebot")
-                        (.use (clj->js {:init init})) )
-        config (clj->js demo/sbot-config)
-        sbot (sbot-create config)
-        _ (println "the new sbot" sbot)
-        api (aget sbot db/index-name)
-        ]
-    (println "the api" api)
-    )
-  )
+(def exports
+  {:init init
+   :name "ssbIgo"
+   :version "0.1"
+   :manifest nil})
 
 (defn main [& args]
   (println "!!main!!" args))

@@ -5,6 +5,7 @@
   "author": "Michael Dougherty <michael.douglas.dougherty@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "bytewise-core": "git+https://github.com/maackle/bytewise-core.git",
     "flumeview-reduce": "^1.3.12",
     "pull-stream": "^3.6.1",
     "scuttlebot": "^10.5.0"

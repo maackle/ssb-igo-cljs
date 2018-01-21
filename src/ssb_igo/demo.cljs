@@ -11,9 +11,6 @@
 
 (def test_message {:type "post" :text "first clojurey post"})
 
-(defn env-get [name]
-  (aget js/process "env" name))
-
 (defn handle_error [err]
   (when err
     (println "ERR!" err)
@@ -36,13 +33,3 @@
       )
     )
   )
-
-(def sbot-config
-  {"path" "~/.ssb"
-   "caps" {"shs" (env-get "SBOT_SHS")
-           "sign" (env-get "SBOT_SIGN")}})
-
-(defn ^:export demo-client []
-  (let [keys (. ssb-keys loadOrCreateSync "/root/.ssb/secret")
-        sbot (ssb-client nil (clj->js sbot-config) sbot-callback)]
-    ))
