@@ -2,7 +2,7 @@
 # NB: Must match lumo node version!!
 FROM node:8.5
 RUN apt update
-RUN apt install -y vim
+RUN apt install -y vim less
 RUN npm config set user 0
 RUN npm config set unsafe-perm true
 RUN npm --loglevel=warn install -g scuttlebot@10.4.6

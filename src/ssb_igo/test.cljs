@@ -41,14 +41,10 @@
 (defn -main
   []
   (let [sbot (test-sbot)
-        nbot (js->clj sbot)
         api (-> sbot
-                (aget "ssbIgo")
-                (aget "arr")
-                (aget 1)
+                .-ssbIgo
                 )
-        _ (println "das api" api)
         ]
-    (println "RUNNING IT" (api))
+    (.getTotal api)
     )
   )

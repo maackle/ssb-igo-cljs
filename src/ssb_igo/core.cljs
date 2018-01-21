@@ -9,9 +9,8 @@
 (defn ^:export init
   ([sbot] (init sbot nil))
   ([sbot config]
-   (let [view (db/flume-view sbot)
-         get-total #(db/get-total view)]
-     {:getTotal get-total}))
+   (let [view (db/flume-view sbot) ]
+     #js {:getTotal #(db/get-total view)}))
   )
 
 (def exports
