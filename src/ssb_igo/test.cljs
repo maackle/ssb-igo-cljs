@@ -38,9 +38,18 @@
     ))
 
 
+(defn pub-message [sbot msg]
+  (.publish sbot (clj->js msg)
+            (fn [err msg]
+              (if err
+                (println err)
+                (println "message published:"))
+              (println msg))))
+
 (defn -main
   []
   (let [sbot (test-sbot)
+        _ (pub-message sbot {:type "igo-move" :position "C2" :prevMove "GOTCHA"})
         api (-> sbot
                 .-ssbIgo
                 )

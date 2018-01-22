@@ -1,34 +1,66 @@
 (ns ssb-igo.db
   (:require
+   [schema.core :as s]
+   [ssb-igo.schemas :as schemas]
    [ssb-igo.util :refer (trace tracer)]
-    ))
+   ))
 
 (def index-version 0)
 (def index-name "ssb-igo-index")
 (def flumeview-reduce (js/require "flumeview-reduce"))
 
-(defn get-content
+(def initial-index
+  {:games {}})
+
+(def message-protocol
+  {"igo-request-match"
+   {:schema {:gameTerms schemas/GameTerms}
+    :reducer (fn [db msg]
+               (assoc-in db [:games (:key msg)] ))}
+
+   "igo-offer-match"
+   {:schema {:gameTerms schemas/GameTerms
+             :opponent s/Str
+             :opponentWhite s/Bool}}
+
+   "igo-accept-match"
+   {:schema {:message s/Str}}
+
+   "igo-decline-match"
+   {:schema {:message s/Str}}
+
+   "igo-move"
+   {:schema {:previousMove s/Str
+             :position schemas/Position}
+    :reducer (fn [db msg]
+               (println "MOOOOVE" msg)
+               db)}
+   }
+)
+
+
+(defn flatten-message
+  "Get all necessary data into the message in a flat hierarchy"
   [msg]
-  ;; TODO: apparently js->clj is slow, so don't do this
-  (js->clj (.. msg -value -content)))
+  ;; TODO: js->clj is slow, eventually we'll have to change this
+  ;; (maybe mod scuttlebot to stream messages as raw JSON and parse as transit??)
+  (let [key (.-key msg)
+        value (.-value msg)
+        author (.-author value)
+        content (js->clj (.-content value) :keywordize-keys true)]
+    (assoc content
+           :key key
+           :author author
+           ))
+  )
 
-(defn is-valid-message?
-  "Run basic validation on messages to see if they match schema"
-  [msg]
-  (let [content (get-content msg)
-        type (get content "type")
-        has-keys #(every? (partial contains? content) %)]
-    (case type
-      "igo-suggest-match"
-      (has-keys ["opponent" "myColor" "gameTerms"])
+(def igo-message-type?
+  (set (keys message-protocol)))
 
-      "igo-decline-match"
-      (has-keys ["message"])
+(defn valid-per-schema?
+  [schema msg]
+  (nil? (s/check schema msg)))
 
-      "igo-move"
-      (has-keys ["position" "prevMove"])
-
-      false)))
 
 ;; CRUCIAL!
 ;; Allows uniform index access even if the reducer did not run
@@ -42,15 +74,22 @@
                      data)))
        })
 
-(defn reducer
-  [index msg]
-  (trace "incoming message" msg)
-  (-> index
-      (update :count inc)))
+(defn flume-reduce-fn
+  [db msg]
+  (let [type (:type msg)
+        reducer (get-in message-protocol [type :reducer])]
+   (trace "incoming message" msg)
+   (-> db (reducer msg))))
 
-(defn mapper
+(defn flume-map-fn
   [msg]
-  (when (is-valid-message? msg) (get-content msg)))
+  (when (igo-message-type? (.. msg -value -content -type))
+    (let [msg (flatten-message msg)
+          type (get-in msg [:content :type])
+          schema (get-in message-protocol [type :schema])]
+      (when (valid-per-schema? schema msg)
+        msg))
+    ))
 
 (defn flume-view
   [sbot]
@@ -59,18 +98,21 @@
               index-name
               (flumeview-reduce
                index-version
-               reducer
-               identity
+               flume-reduce-fn
+               flume-map-fn
                codec
-               {:count 0}
+               initial-index
                )))
+
+; (defn view-getter
+;   [view ])
 
 (defn get-total
   [view]
   (.get view
         (fn [err index]
           (do
-            (println "\nindex??" (->> index))
+            (println "\nindex??" index)
             (println "\nerr?? " err)
             )
           )))

@@ -9,27 +9,35 @@
 (def ssb-client (js/require "ssb-client"))
 (def ssb-keys (js/require "ssb-keys"))
 
-(def test_message {:type "post" :text "first clojurey post"})
+(def test-message {:type "ssb-igo-demo" :text "demo"})
 
-(defn handle_error [err]
+(defn handle-error [err]
   (when err
     (println "ERR!" err)
     ))
 
-(defn parse_message [msg]
+(defn parse-message [msg]
   (print "°•° message received: " (js->clj msg :keywordize-keys true)))
 
-(defn get_message [sbot]
+(defn get-message [sbot]
   (pull (.createFeedStream sbot)
-        (.drain pull parse_message handle_error)))
+        (.drain pull parse-message handle-error)))
+
+(defn pub-message [sbot msg]
+  (.publish sbot (clj->js msg)
+            (fn [err msg]
+              (if err
+                (println err)
+                (println "message published:"))
+              (println msg))))
 
 (defn sbot-callback [err sbot]
   (if err
     (println "ERROR! " err)
     (do
       (println "sbot obj: " sbot)
-      (get_message sbot)
-      ;(pub_message test_message sbot)
+      (get-message sbot)
+      ;(pub-message test-message sbot)
       )
     )
   )

@@ -6,7 +6,8 @@
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.908"]
-                 [environ "1.1.0"]]
+                 [com.cognitect/transit-cljs "0.8.243"]
+                 [prismatic/schema "1.1.7"]]
 
   :plugins [[lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]
             [lein-figwheel "0.5.13"]]
