@@ -1,1 +1,3 @@
-lumo -c src dev/build.cljs && node dev/index.js
+# lumo -c src dev/build.cljs && node dev/index.js
+
+dev/repl -m ssb-igo.test

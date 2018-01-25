@@ -1,4 +1,5 @@
-lumo -c src                   \
+lumo                          \
+  -c src                      \
   -D funcool/struct:1.2.0     \
   -D funcool/cuerdas:2.0.5    \
   $@

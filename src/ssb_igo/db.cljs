@@ -48,19 +48,16 @@
         value (.-value msg)
         author (.-author value)
         content (js->clj (.-content value) :keywordize-keys true)]
-    (assoc content
-           :key key
-           :author author
-           ))
-  )
+    {:content content
+     :meta {:key key
+            :author author}}))
 
 (def igo-message-type?
   (set (keys message-protocol)))
 
-(defn valid-per-schema?
+(defn content-valid?
   [schema msg]
-  (trace "SCHEMA " schema)
-  (s/valid? msg schema))
+  (s/valid? (:content msg) schema))
 
 
 ;; CRUCIAL!
@@ -77,7 +74,7 @@
 
 (defn flume-reduce-fn
   [db msg]
-  (let [type (:type msg)
+  (let [type (get-in msg [:content :type])
         reducer (get-in message-protocol [type :reducer])]
    (trace "incoming message" msg)
    (-> db (reducer msg))))
@@ -86,9 +83,9 @@
   [msg]
   (when (igo-message-type? (.. msg -value -content -type))
     (let [msg (flatten-message msg)
-          type (:type msg)
+          type (get-in msg [:content :type])
           schema (get-in message-protocol [type :schema])]
-      (when (valid-per-schema? schema msg)
+      (when (content-valid? schema msg)
         msg))
     ))
 
