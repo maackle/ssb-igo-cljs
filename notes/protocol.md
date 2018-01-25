@@ -26,7 +26,7 @@ Message for requesting a match, which all friends will be able to see
 Message for initiating a match with a particular uxer
 
 * opponent : PlayerID
-* myColor : Black | White
+* opponentColor : Black | White
 * gameTerms : GameTerms
 
 
@@ -53,6 +53,8 @@ Used to decline a match suggested by another player. Dead-ends the message chain
 * position: BoardCoords | Pass | Resign
 * prevMove : MessageID
     - the previous `igo-move` message, or if this is the first move, the `igo-offer-match` message which started the game
+* moveNum : Int
+    - only necessary because I expect move validation to happen during gameplay rather than during flume view construction, so this is a way to at least display the move number to other users without their databases having to validate every game
 
 
 ### `igo-chat`
@@ -74,6 +76,16 @@ Shows that you were watching a game at a particular move, to let others know you
 
 ## Ending the game
 
-### `igo-post-results`
+### `igo-mark-dead-region`
 
-???
+During the counting phase, mark a region of dead stones
+
+* prev : MessageID
+
+### `igo-unmark-dead-region`
+
+During the counting phase, unmark a region of dead stones
+
+* prev : MessageID
+
+### `igo-resume`

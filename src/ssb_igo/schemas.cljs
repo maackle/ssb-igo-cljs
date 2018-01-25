@@ -1,12 +1,12 @@
 (ns ssb-igo.schemas
   (:require
-   [schema.core :as s]))
+   [struct.core :as s]))
 
 (def GameTerms
-  {:size s/Int
-   :komi s/Num
-   :handicap s/Int})
+  {:size s/integer
+   :komi s/number
+   :handicap s/integer})
 
 (def Position
-  {:row s/Int
-   :col s/Int})
+  {:row s/integer
+   :col s/integer})

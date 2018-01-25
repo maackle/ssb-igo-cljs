@@ -1,8 +1,12 @@
 # specify the node base image with your desired version node:<version>
 # NB: Must match lumo node version!!
-FROM node:8.5
+FROM openjdk
 RUN apt update
 RUN apt install -y vim less
+
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
+RUN apt-get install -y nodejs build-essential
+
 RUN npm config set user 0
 RUN npm config set unsafe-perm true
 RUN npm --loglevel=warn install -g scuttlebot@10.4.6
@@ -21,6 +25,11 @@ ADD ./package.json .
 RUN npm install
 
 ADD ./project.clj .
+
+RUN curl https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein > /bin/lein
+RUN chmod a+x /bin/lein
+RUN /bin/lein
+RUN lein deps
 
 EXPOSE 8008
 

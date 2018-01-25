@@ -1,6 +1,6 @@
 (ns ssb-igo.db
   (:require
-   [schema.core :as s]
+   [struct.core :as s]
    [ssb-igo.schemas :as schemas]
    [ssb-igo.util :refer (trace tracer)]
    ))
@@ -16,21 +16,21 @@
   {"igo-request-match"
    {:schema {:gameTerms schemas/GameTerms}
     :reducer (fn [db msg]
-               (assoc-in db [:games (:key msg)] ))}
+               (assoc-in db [:games (:key msg)] msg))}
 
    "igo-offer-match"
    {:schema {:gameTerms schemas/GameTerms
-             :opponent s/Str
-             :opponentWhite s/Bool}}
+             :opponent s/string
+             :opponentWhite s/boolean}}
 
    "igo-accept-match"
-   {:schema {:message s/Str}}
+   {:schema {:message s/string}}
 
    "igo-decline-match"
-   {:schema {:message s/Str}}
+   {:schema {:message s/string}}
 
    "igo-move"
-   {:schema {:previousMove s/Str
+   {:schema {:previousMove s/string
              :position schemas/Position}
     :reducer (fn [db msg]
                (println "MOOOOVE" msg)
@@ -59,7 +59,8 @@
 
 (defn valid-per-schema?
   [schema msg]
-  (nil? (s/check schema msg)))
+  (trace "SCHEMA " schema)
+  (s/valid? msg schema))
 
 
 ;; CRUCIAL!
@@ -85,7 +86,7 @@
   [msg]
   (when (igo-message-type? (.. msg -value -content -type))
     (let [msg (flatten-message msg)
-          type (get-in msg [:content :type])
+          type (:type msg)
           schema (get-in message-protocol [type :schema])]
       (when (valid-per-schema? schema msg)
         msg))
