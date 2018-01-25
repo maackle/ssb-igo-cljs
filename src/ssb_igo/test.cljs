@@ -24,7 +24,6 @@
         keys (. ssb-keys loadOrCreateSync "/root/.ssb/secret")
         config (as-> sbot-config $
                      (assoc $ :keys keys)
-                     (assoc $ :key (env-get "SBOT_SHS"))
                      (ssb-config "ssb" $))
         sbot (sbot-create config)
         ]
@@ -43,8 +42,8 @@
             (fn [err msg]
               (if err
                 (println err)
-                (println "message published:"))
-              (println msg))))
+                (println "message published:" msg))
+              )))
 
 (defn -main
   []

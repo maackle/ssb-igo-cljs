@@ -2,7 +2,7 @@
 
 (b/build "src"
   {:main 'ssb-igo.core
-   :output-to "out/inject.js"
-   :optimizations :none
+   :output-to "target/inject.js"
+   :optimizations :advanced
    :source-map false
    :target :nodejs})

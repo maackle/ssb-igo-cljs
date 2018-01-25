@@ -10,30 +10,39 @@
 (def flumeview-reduce (js/require "flumeview-reduce"))
 
 (def initial-index
-  {:games {}})
+  {:games {}
+   :total-test 0})
 
 (def message-protocol
   {"igo-request-match"
    {:schema {:gameTerms schemas/GameTerms}
+    :mapper (fn [msg]
+              (assoc (:content msg) :status :open))
     :reducer (fn [db msg]
                (assoc-in db [:games (:key msg)] msg))}
 
    "igo-offer-match"
    {:schema {:gameTerms schemas/GameTerms
              :opponent s/string
-             :opponentWhite s/boolean}}
+             :opponentWhite s/boolean}
+    :reducer (fn [db msg]
+               db)}
 
    "igo-accept-match"
-   {:schema {:message s/string}}
+   {:schema {:messageKey s/string}
+    :reducer (fn [db msg]
+               (let [key (get-in msg [:content :messageKey])
+                     game (get-in db [:games])]))}
 
    "igo-decline-match"
-   {:schema {:message s/string}}
+   {:schema {:messageKey s/string}
+    :reducer (fn [db msg]
+               db)}
 
    "igo-move"
    {:schema {:previousMove s/string
              :position schemas/Position}
     :reducer (fn [db msg]
-               (println "MOOOOVE" msg)
                db)}
    }
 )
@@ -72,12 +81,18 @@
                      data)))
        })
 
+(defn test-reducer
+  [db msg]
+  (update db :total-test inc))
+
 (defn flume-reduce-fn
   [db msg]
   (let [type (get-in msg [:content :type])
         reducer (get-in message-protocol [type :reducer])]
    (trace "incoming message" msg)
-   (-> db (reducer msg))))
+   (-> db
+       (reducer msg)
+       (test-reducer msg))))
 
 (defn flume-map-fn
   [msg]
@@ -109,8 +124,10 @@
   [view]
   (.get view
         (fn [err index]
-          (do
-            (println "\nindex??" index)
-            (println "\nerr?? " err)
+          (if err
+            (trace "get-total ERROR " err)
+            (do
+              (trace "Total messages:" (:total-test index))
+              (trace "Full index: " index))
             )
           )))

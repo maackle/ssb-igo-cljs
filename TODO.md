@@ -1,5 +1,8 @@
 
 * figure out lein deps w/ lumo
+
+- - -
+
 * set up basic message schema for game creating and playing
 * build flume index
   - map of all Games for all players
@@ -8,7 +11,7 @@
     - all moves (invalid or not)
     - all chats
     - whose turn?
-* script to create game messages
+* script to create test game messages
 
 * build simple front end
   - just get console.log of something from ssb_igo.core

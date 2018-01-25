@@ -14,10 +14,10 @@
   )
 
 (def exports
-  {:init init
-   :name "ssbIgo"
-   :version "0.1"
-   :manifest nil})
+  #js {:init init
+       :name "ssbIgo"
+       :version "0.1"
+       :manifest nil})
 
 (defn main [& args]
   (println "!!main!!" args))
