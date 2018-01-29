@@ -1,6 +1,6 @@
 (ns ssb-igo.schemas
   (:require
-   [struct.core :as s]))
+   [struct.core :as st]))
 
 (defn one-of
   [vals]
@@ -9,16 +9,18 @@
    :validate #(contains? vals %)})
 
 (def GameTerms
-  {:size s/integer
-   :komi s/number
-   :handicap s/integer})
+  {:size st/integer
+   :komi st/number
+   :handicap st/integer})
 
 (def Position
-  {:row s/integer
-   :col s/integer})
+  {:row st/integer
+   :col st/integer})
+
+(def MessageKey st/string)
 
 (def Player
-  {:key s/string})
+  {:key st/string})
 
 (def Game
   {:gameTerms GameTerms
@@ -27,6 +29,28 @@
    })
 
 (def FlumeIndex
-  {:games {s/string s/map}
-   :offers {s/string s/map}
+  {:games {st/string st/map}
+   :offers {st/string st/map}
    })
+
+(def MessageTypes
+  {:igo-request-match
+   {:gameTerms GameTerms}
+
+   :igo-offer-match
+   {:opponent Player}
+
+   :igo-accept-match
+   {:target MessageKey}
+
+   :igo-decline-match
+   {:target MessageKey}
+
+   :igo-move
+   {:position Position
+    :prevMove MessageKey
+    :moveNum st/integer}
+
+   :igo-chat
+   {:text st/string
+    :move MessageKey}})

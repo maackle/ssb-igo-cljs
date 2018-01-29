@@ -9,7 +9,7 @@ services:
       - "./dev:/code/dev"
       - "./out:/code/out"
       - "./src:/code/src"
-      - "data-alice:/root/.ssb"
+      - "data-alice:/root"
   bob:
     build: .
     ports:
@@ -18,7 +18,7 @@ services:
       - "./dev:/code/dev"
       - "./out:/code/out"
       - "./src:/code/src"
-      - "data-bob:/root/.ssb"
+      - "data-bob:/root"
 
 volumes:
   data-alice:

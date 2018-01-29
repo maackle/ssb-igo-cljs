@@ -1,7 +1,6 @@
 (ns ssb-igo.core
   (:require
     [ssb-igo.db :as db]
-    [ssb-igo.demo :as demo]
     ))
 
 (enable-console-print!)

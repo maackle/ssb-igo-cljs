@@ -21,6 +21,8 @@ RUN /bin/lein
 ENV SBOT_SHS GVZDyNf1TrZuGv3W5Dpef0vaITW1UqOUO3aWLNBp+7A=
 ENV SBOT_SIGN gym3eJKBjm0E0OIjuh3O1VX8+lLVSGV2p5UzrMStHTs=
 
+ENV SBOT_SHS_TEST GVZDyNf1TrZuGv3W5Dpef0vaITW1UqOUO3aWLNBp-7A=
+
 WORKDIR /code
 
 ADD ./dev/bashrc /root/.bashrc
@@ -34,6 +36,8 @@ RUN lein deps
 
 # TODO: move up top :(
 RUN apt install -y tmux rlwrap
+
+RUN echo "alias ll='ls -a'" >> ~/.bashrc && source ~/.bashrc
 
 EXPOSE 8008
 

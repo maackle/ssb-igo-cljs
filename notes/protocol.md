@@ -3,8 +3,8 @@
 
 ## Types referenced
 
-    PlayerID : @id
-    MessageID : %id
+    PlayerID : "\@id"
+    MessageID : "\%id"
     GameTerms : {
         size : Int
         komi : Float

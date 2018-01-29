@@ -1,6 +1,6 @@
 (ns ssb-igo.db
   (:require
-   [struct.core :as s]
+   [struct.core :as st]
    [ssb-igo.schemas :as schemas]
    [ssb-igo.util :refer (trace tracer)]
    ))
@@ -10,8 +10,11 @@
 (def flumeview-reduce (js/require "flumeview-reduce"))
 
 (def initial-index
-  {:games {}
-   :total-test 0})
+  (st/validate! {:games {}
+                :requests {}
+                :offers {}
+                :total-test 0}
+   schemas/FlumeIndex))
 
 (def message-protocol
   {"igo-request-match"
@@ -19,28 +22,28 @@
     :mapper (fn [msg]
               (assoc (:content msg) :status :open))
     :reducer (fn [db msg]
-               (assoc-in db [:games (:key msg)] msg))}
+               (assoc-in db [:requests (:key msg)] msg))}
 
    "igo-offer-match"
    {:schema {:gameTerms schemas/GameTerms
-             :opponent s/string
-             :opponentWhite s/boolean}
+             :opponent st/string
+             :opponentWhite st/boolean}
     :reducer (fn [db msg]
                db)}
 
    "igo-accept-match"
-   {:schema {:messageKey s/string}
+   {:schema {:messageKey st/string}
     :reducer (fn [db msg]
                (let [key (get-in msg [:content :messageKey])
                      game (get-in db [:games])]))}
 
    "igo-decline-match"
-   {:schema {:messageKey s/string}
+   {:schema {:messageKey st/string}
     :reducer (fn [db msg]
                db)}
 
    "igo-move"
-   {:schema {:previousMove s/string
+   {:schema {:previousMove st/string
              :position schemas/Position}
     :reducer (fn [db msg]
                db)}
@@ -48,8 +51,8 @@
 )
 
 
-(defn flatten-message
-  "Get all necessary data into the message in a flat hierarchy"
+(defn restructure-message
+  "Get all necessary data into the message in a flatter, more convenient structure"
   [msg]
   ;; TODO: js->clj is slow, eventually we'll have to change this
   ;; (maybe mod scuttlebot to stream messages as raw JSON and parse as transit??)
@@ -66,7 +69,7 @@
 
 (defn content-valid?
   [schema msg]
-  (s/valid? (:content msg) schema))
+  (st/valid? (:content msg) schema))
 
 
 ;; CRUCIAL!
@@ -82,6 +85,7 @@
        })
 
 (defn test-reducer
+  "TODO: remove"
   [db msg]
   (update db :total-test inc))
 
@@ -92,12 +96,13 @@
    (trace "incoming message" msg)
    (-> db
        (reducer msg)
-       (test-reducer msg))))
+       (test-reducer msg) ;; TODO: remove
+       )))
 
 (defn flume-map-fn
   [msg]
   (when (igo-message-type? (.. msg -value -content -type))
-    (let [msg (flatten-message msg)
+    (let [msg (restructure-message msg)
           type (get-in msg [:content :type])
           schema (get-in message-protocol [type :schema])]
       (when (content-valid? schema msg)
