@@ -28,13 +28,25 @@
                 :target :nodejs
                 :optimizations :none
                 :source-map-timestamp true}}
+             {:id "server"
+              :source-paths ["src"]
+              :figwheel true
+              :compiler {:main figserver.core
+                         :output-to "target/fig_out/figserver.js"
+                         :output-dir "target/fig_out"
+                         :target :nodejs
+                         :optimizations :none
+                         :source-map true}}
              #_{:id "prod"
               :source-paths ["src"]
               :compiler {
                 :output-to "target/js/prod.js"
                 :output-dir "target/js/prod"
                 :target :nodejs
-                :optimizations :simple}}]}
+                :optimizations :simple}}]
+  }
+
+  :figwheel {}
 
   :profiles {:dev {:dependencies [[figwheel-sidecar "0.5.13"]
                                   [com.cemerick/piggieback "0.2.2"]]

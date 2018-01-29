@@ -1,1 +1,1 @@
-sbot server -- --caps.shs=$SBOT_SHS --caps.sign=$SBOT_SIGN &
+sbot server -- --caps.shs=$SBOT_SHS --caps.sign=$SBOT_SIGN 

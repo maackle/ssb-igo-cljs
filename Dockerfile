@@ -13,6 +13,10 @@ RUN npm --loglevel=warn install -g scuttlebot@10.4.6
 RUN npm --loglevel=warn install -g lumo-cljs@1.8.0-beta
 RUN npm --loglevel=warn install -g calvin-cljs@0.3.0
 
+RUN curl https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein > /bin/lein
+RUN chmod a+x /bin/lein
+RUN /bin/lein
+
 # for testnet
 ENV SBOT_SHS GVZDyNf1TrZuGv3W5Dpef0vaITW1UqOUO3aWLNBp+7A=
 ENV SBOT_SIGN gym3eJKBjm0E0OIjuh3O1VX8+lLVSGV2p5UzrMStHTs=
@@ -26,10 +30,10 @@ RUN npm install
 
 ADD ./project.clj .
 
-RUN curl https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein > /bin/lein
-RUN chmod a+x /bin/lein
-RUN /bin/lein
 RUN lein deps
+
+# TODO: move up top :(
+RUN apt install -y tmux rlwrap
 
 EXPOSE 8008
 
