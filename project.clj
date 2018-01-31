@@ -23,12 +23,13 @@
               ; :figwheel true
               :compiler {
                 :main ssb-igo.core
-                :asset-path "target/js/dev"
-                :output-to "target/inject.js"
+                ; :asset-path "target/js/dev"
+                :output-to "target/js/inject.js"
                 :output-dir "target/js/dev"
                 :target :nodejs
                 :optimizations :none
-                :source-map-timestamp true}}
+                ;:source-map-timestamp true
+                         }}
              {:id "server"
               :source-paths ["src"]
               :figwheel true
@@ -38,10 +39,11 @@
                          :target :nodejs
                          :optimizations :none
                          :source-map true}}
-             #_{:id "prod"
+             {:id "prod"
               :source-paths ["src"]
               :compiler {
-                :output-to "target/js/prod.js"
+                :main ssb-igo.core
+                :output-to "target/js/inject.js"
                 :output-dir "target/js/prod"
                 :target :nodejs
                 :optimizations :simple}}]

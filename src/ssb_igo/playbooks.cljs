@@ -90,11 +90,16 @@
      ; Bob passes
      ]))
 
+(defn make-config
+  []
+  (test/sbot-config "/tmp/abc" test-shs))
+
 (defn -main [& args]
   (let [handler (fn [err client]
                   (if err
                     (println "ERR!" err)
-                    (run-playbook client (playbook1))))]
-    (test/test-client (test/sbot-config test-shs) handler)))
+                    (run-playbook client (playbook1))))
+        config (make-config)]
+    (test/test-client config handler)))
 
 (def main -main)

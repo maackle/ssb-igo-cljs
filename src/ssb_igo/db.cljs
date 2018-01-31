@@ -6,7 +6,7 @@
    ))
 
 (def index-version 0)
-(def index-name "ssb-igo-index")
+(def default-index-name "ssb-igo-index")
 (def flumeview-reduce (js/require "flumeview-reduce"))
 
 (def initial-index
@@ -32,19 +32,25 @@
                db)}
 
    "igo-accept-match"
-   {:schema {:messageKey st/string}
+   {:schema {:messageKey schemas/MessageKey}
     :reducer (fn [db msg]
                (let [key (get-in msg [:content :messageKey])
                      game (get-in db [:games])]))}
 
    "igo-decline-match"
-   {:schema {:messageKey st/string}
+   {:schema {:messageKey schemas/MessageKey}
     :reducer (fn [db msg]
                db)}
 
    "igo-move"
-   {:schema {:previousMove st/string
+   {:schema {:previousMove schemas/MessageKey
              :position schemas/Position}
+    :reducer (fn [db msg]
+               db)}
+
+   "igo-chat"
+   {:schema {:move schemas/MessageKey
+             :text st/string}
     :reducer (fn [db msg]
                db)}
    }
@@ -93,7 +99,6 @@
   [db msg]
   (let [type (get-in msg [:content :type])
         reducer (get-in message-protocol [type :reducer])]
-   (trace "incoming message" msg)
    (-> db
        (reducer msg)
        (test-reducer msg) ;; TODO: remove
@@ -109,30 +114,33 @@
         msg))
     ))
 
-(defn flume-view
-  [sbot]
-  ; TODO: just do .use
-  (._flumeUse sbot
-              index-name
-              (flumeview-reduce
-               index-version
-               flume-reduce-fn
-               flume-map-fn
-               codec
-               initial-index
-               )))
+(def flume-view
+  (flumeview-reduce
+   index-version
+   flume-reduce-fn
+   flume-map-fn
+   codec
+   initial-index
+   ))
 
-; (defn view-getter
-;   [view ])
+(defn build-flume-view
+  [sbot index-name]
+  ; TODO: apparently this is temporary?
+  (._flumeUse sbot
+              (or index-name default-index-name)
+              flume-view))
+
+(defn view-mapper
+  [f view cb]
+  (.get view (fn [err val]
+               (if err
+                 (cb err nil)
+                 (cb nil (f val))))))
 
 (defn get-total
-  [view]
-  (.get view
-        (fn [err index]
-          (if err
-            (trace "get-total ERROR " err)
-            (do
-              (trace "Total messages:" (:total-test index))
-              (trace "Full index: " index))
-            )
-          )))
+  [view cb]
+  (view-mapper
+   #(get-in % [:total-test])
+   view
+   cb
+        ))

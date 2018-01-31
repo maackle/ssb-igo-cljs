@@ -5,16 +5,30 @@
 
 (enable-console-print!)
 
-(defn ^:export init
-  ([sbot] (init sbot nil))
-  ([sbot config]
-   (let [view (db/flume-view sbot) ]
-     #js {:getTotal #(db/get-total view)}))
+#_(def ^:export view db/flume-view)
+
+(defn init
+  ([sbot opts]
+   (let [testing? (.-temp opts)
+         view (db/build-flume-view sbot nil)
+         ]
+     (clj->js (cond-> {:getTotal #(db/get-total view %)}
+                      testing? (assoc :destroy (.-destroy view)
+                                      :value #(-> view .-value))
+                      ))))
   )
 
-(def exports
+
+#_(defn init
+  ([sbot opts]
+   (let [with-view #(% (db/build-flume-view sbot))]
+     (clj->js (cond-> {:getTotal #(with-view db/get-total)}
+                      (.-temp opts) (assoc :destroy (with-view #(.-destroy %)))))))
+  )
+
+(def ^:export plugin
   #js {:init init
-       :name "ssbIgo"
+       :name "ssbIgoDb"
        :version "0.1"
        :manifest nil})
 

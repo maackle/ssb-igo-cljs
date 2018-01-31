@@ -1,1 +1,2 @@
-sbot $@ -- --caps.shs=$SBOT_SHS --caps.sign=$SBOT_SIGN 
+echo "Starting sbot server with presets"
+sbot $@ -- --caps.shs=$SBOT_SHS --caps.sign=$SBOT_SIGN

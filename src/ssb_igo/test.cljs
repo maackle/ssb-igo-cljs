@@ -16,25 +16,21 @@
 (def caps-sign (env-get "SBOT_SIGN"))
 
 (defn sbot-config
-  ([] (sbot-config caps-shs))
-  ([shs]
-   {"path" "~/.ssb"
-    "caps" {"shs" shs
-            "sign" caps-sign}}))
+  ([] (sbot-config "/root/.ssb" caps-shs))
+  ([path] (sbot-config path caps-shs))
+  ([path shs]
+   (let [keys (. ssb-keys loadOrCreateSync (str path "/secret"))
+         config #js {"path" path
+                 "keys" keys
+                 "caps" {"shs" shs
+                         "sign" caps-sign}}]
+     (ssb-config "ssb" config)
+     )))
 
 
-(defn test-sbot
-  []
-  (let [sbot-create (-> (js/require "scuttlebot")
-                        (.use (clj->js ssb-igo.core/exports)) )
-        keys (. ssb-keys loadOrCreateSync "/root/.ssb/secret")
-        config (as-> (sbot-config) $
-                     (assoc $ :keys keys)
-                     (ssb-config "ssb" $))
-        sbot (sbot-create config)
-        ]
-    sbot
-    )
+(def test-sbot
+  (-> (js/require "scuttlebot")
+      (.use (clj->js ssb-igo.core/exports)) )
   )
 
 (defn test-client
@@ -55,7 +51,7 @@
 
 (defn -main
   []
-  (let [sbot (test-sbot)
+  (let [sbot (test-sbot (sbot-config))
         _ (pub-message sbot {:type "igo-move" :position "C2" :prevMove "GOTCHA"})
         api (-> sbot
                 .-ssbIgo

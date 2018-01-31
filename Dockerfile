@@ -37,7 +37,7 @@ RUN lein deps
 # TODO: move up top :(
 RUN apt install -y tmux rlwrap
 
-RUN echo "alias ll='ls -a'" >> ~/.bashrc && source ~/.bashrc
+RUN echo "alias ll='ls -l'" >> ~/.bashrc && source ~/.bashrc
 
 EXPOSE 8008
 
