@@ -20,15 +20,25 @@
   :cljsbuild {
     :builds [{:id "dev"
               :source-paths ["src"]
-              ; :figwheel true
+              :figwheel true
               :compiler {
                 :main ssb-igo.core
-                ; :asset-path "target/js/dev"
                 :output-to "target/js/inject.js"
                 :output-dir "target/js/dev"
                 :target :nodejs
                 :optimizations :none
-                ;:source-map-timestamp true
+                :source-map-timestamp true
+                         }}
+             {:id "test"
+              :source-paths ["test" "src"]
+              :figwheel true
+              :compiler {
+                         :main ssb-igo.test
+                         :output-to "target/js/test.js"
+                         :output-dir "target/js/test"
+                         :target :nodejs
+                         :optimizations :none
+                         :source-map-timestamp true
                          }}
              {:id "server"
               :source-paths ["src"]

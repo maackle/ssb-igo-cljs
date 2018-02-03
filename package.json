@@ -8,6 +8,7 @@
     "bytewise-core": "git+https://github.com/maackle/bytewise-core.git",
     "flumeview-reduce": "^1.3.12",
     "pull-stream": "^3.6.1",
+    "scuttle-playbook": "^0.0.1",
     "scuttle-testbot": "git+https://github.com/maackle/scuttle-testbot.git",
     "scuttlebot": "^10.5.0",
     "tape": "^4.8.0"

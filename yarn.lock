@@ -2312,13 +2312,11 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
 
-scuttle-testbot@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/scuttle-testbot/-/scuttle-testbot-1.1.3.tgz#8e7eb387e851a4a81c506cef74a1d72f579d1cd3"
+scuttle-playbook@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/scuttle-playbook/-/scuttle-playbook-0.0.1.tgz#e1fae3ab8801a81fab3199cdc530baed06f7ed56"
   dependencies:
-    rimraf "^2.6.2"
     scuttlebot "^10.5.0"
-    ssb-keys "^7.0.13"
 
 "scuttle-testbot@git+https://github.com/maackle/scuttle-testbot.git":
   version "1.1.3"
