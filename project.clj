@@ -25,9 +25,9 @@
                 :main ssb-igo.core
                 :output-to "target/js/inject.js"
                 :output-dir "target/js/dev"
+                ; :asset-path "target/js/dev"
                 :target :nodejs
                 :optimizations :none
-                :source-map-timestamp true
                          }}
              {:id "test"
               :source-paths ["test" "src"]
@@ -38,7 +38,6 @@
                          :output-dir "target/js/test"
                          :target :nodejs
                          :optimizations :none
-                         :source-map-timestamp true
                          }}
              {:id "server"
               :source-paths ["src"]
@@ -47,8 +46,7 @@
                          :output-to "target/fig_out/figserver.js"
                          :output-dir "target/fig_out"
                          :target :nodejs
-                         :optimizations :none
-                         :source-map true}}
+                         :optimizations :none}}
              {:id "prod"
               :source-paths ["src"]
               :compiler {

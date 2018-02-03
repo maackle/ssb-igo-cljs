@@ -12,5 +12,9 @@
     "scuttle-testbot": "git+https://github.com/maackle/scuttle-testbot.git",
     "scuttlebot": "^10.5.0",
     "tape": "^4.8.0"
+  },
+  "devDependencies": {
+    "source-map-support": "^0.5.3",
+    "ws": "^4.0.0"
   }
 }

@@ -2,6 +2,7 @@
   (:require
    [struct.core :as st]
    [ssb-igo.schemas :as schemas]
+   [ssb-igo.messages :as messages]
    [ssb-igo.util :refer (trace tracer)]
    ))
 
@@ -11,50 +12,11 @@
 
 (def initial-index
   (st/validate! {:games {}
-                :requests {}
-                :offers {}
-                :total-test 0}
+                 :requests {}
+                 :offers {}
+                 :total-test 0}
    schemas/FlumeIndex))
 
-(def message-protocol
-  {"igo-request-match"
-   {:schema {:gameTerms schemas/GameTerms}
-    :mapper (fn [msg]
-              (assoc (:content msg) :status :open))
-    :reducer (fn [db msg]
-               (assoc-in db [:requests (:key msg)] msg))}
-
-   "igo-offer-match"
-   {:schema {:gameTerms schemas/GameTerms
-             :opponent st/string
-             :opponentWhite st/boolean}
-    :reducer (fn [db msg]
-               db)}
-
-   "igo-accept-match"
-   {:schema {:messageKey schemas/MessageKey}
-    :reducer (fn [db msg]
-               (let [key (get-in msg [:content :messageKey])
-                     game (get-in db [:games])]))}
-
-   "igo-decline-match"
-   {:schema {:messageKey schemas/MessageKey}
-    :reducer (fn [db msg]
-               db)}
-
-   "igo-move"
-   {:schema {:previousMove schemas/MessageKey
-             :position schemas/Position}
-    :reducer (fn [db msg]
-               db)}
-
-   "igo-chat"
-   {:schema {:move schemas/MessageKey
-             :text st/string}
-    :reducer (fn [db msg]
-               db)}
-   }
-)
 
 
 (defn restructure-message
@@ -71,7 +33,7 @@
             :author author}}))
 
 (def igo-message-type?
-  (set (keys message-protocol)))
+  (set (keys messages/protocol)))
 
 (defn content-valid?
   [schema msg]
@@ -98,7 +60,7 @@
 (defn flume-reduce-fn
   [db msg]
   (let [type (get-in msg [:content :type])
-        reducer (get-in message-protocol [type :reducer])]
+        reducer (get-in messages/protocol [type :reducer])]
    (-> db
        (reducer msg)
        (test-reducer msg) ;; TODO: remove
@@ -109,7 +71,7 @@
   (when (igo-message-type? (.. msg -value -content -type))
     (let [msg (restructure-message msg)
           type (get-in msg [:content :type])
-          schema (get-in message-protocol [type :schema])]
+          schema (get-in messages/protocol [type :schema])]
       (when (content-valid? schema msg)
         msg))
     ))
@@ -129,18 +91,3 @@
   (._flumeUse sbot
               (or index-name default-index-name)
               flume-view))
-
-(defn view-mapper
-  [f view cb]
-  (.get view (fn [err val]
-               (if err
-                 (cb err nil)
-                 (cb nil (f val))))))
-
-(defn get-total
-  [view cb]
-  (view-mapper
-   #(get-in % [:total-test])
-   view
-   cb
-        ))

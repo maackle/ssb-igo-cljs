@@ -30,7 +30,7 @@
 
 (def test-sbot
   (-> (js/require "scuttlebot")
-      (.use (clj->js ssb-igo.core/exports)) )
+      (.use (clj->js ssb-igo.core/plugin)) )
   )
 
 (defn test-client

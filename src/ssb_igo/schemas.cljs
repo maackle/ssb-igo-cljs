@@ -19,8 +19,11 @@
 
 (def MessageKey st/string)
 
-(def Player
-  {:key st/string})
+(def PlayerKey st/string)
+
+#_(def Player
+  {:key PlayerKey})
+
 
 (def Game
   {:gameTerms GameTerms
@@ -32,25 +35,3 @@
   {:games {st/string st/map}
    :offers {st/string st/map}
    })
-
-(def MessageTypes
-  {:igo-request-match
-   {:gameTerms GameTerms}
-
-   :igo-offer-match
-   {:opponent Player}
-
-   :igo-accept-match
-   {:target MessageKey}
-
-   :igo-decline-match
-   {:target MessageKey}
-
-   :igo-move
-   {:position Position
-    :prevMove MessageKey
-    :moveNum st/integer}
-
-   :igo-chat
-   {:text st/string
-    :move MessageKey}})
